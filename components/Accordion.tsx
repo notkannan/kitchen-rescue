@@ -8,15 +8,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const ingredients = [
-    'Tomatoes', 'Onions', 'Chillies', 'Bread', 'Banana'
-]
-
-const quantity = [
-    '15', '16', '25', '1 loaf', '3'
-]
 
 const inventory = [
   {
@@ -45,7 +37,7 @@ const inventory = [
 
 const name = 'Kannan'
 
-const mapped = ingredients.map((item, index) => {
+const mapped = inventory.map((item) => {
     return(
         <Accordion>
         <AccordionSummary
@@ -53,10 +45,11 @@ const mapped = ingredients.map((item, index) => {
           aria-controls="panel3-content"
           id="panel3-header"
         >
-          {item} | {quantity[index]}
+          {item.name} <br />
+          Quantity: {item.quantity}
         </AccordionSummary>
         <AccordionDetails>
-          Quantity goes here
+          {item.note}
         </AccordionDetails>
         <AccordionActions>
           <Button>Edit</Button>
@@ -79,7 +72,10 @@ export default function AccordionContent() {
         >
             Welcome to your Inventory, {name}
         </Typography>
-        {mapped}
+        <div className='text-lg overflow-scroll sm:text-md '>
+          {mapped}
+        </div>
+
       </div>
     );
   }

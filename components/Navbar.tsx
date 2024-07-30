@@ -13,10 +13,10 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import { Roboto } from 'next/font/google';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import Link from 'next/link';
 
-const pages = ['Dashboard','Inventory','Recipes'];
+const pages = ['Inventory','Recipes'];
 const settings = ['Account', 'Signout'];
 
 function Navbar() {
@@ -38,11 +38,12 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
+
   return (
     <AppBar position="static" sx={{ backgroundColor: 'primary.main' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
+          <LocalDiningIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -50,11 +51,11 @@ function Navbar() {
             href="/"
             sx={{
               mr: 2,
-              mb: 0.5,
               display: { xs: 'none', md: 'flex' },
-              fontWeight: 300,
+              fontWeight: 700,
               color:"white",
               textDecoration: 'none',
+              textTransform: 'uppercase'
             }}
           >
             Kitchen Rescue
@@ -90,13 +91,15 @@ function Navbar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center" component="a" href="/Inventory">{page}</Typography>
-                </MenuItem>
+                <Link href={`/${page.toLowerCase()}`}>
+                  <MenuItem key={page} onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">{page}</Typography>
+                  </MenuItem>
+                </Link>
               ))}
             </Menu>
           </Box>
-          {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
+          
           <Typography
             variant="h5"
             noWrap
@@ -112,17 +115,20 @@ function Navbar() {
               textDecoration: 'none',
             }}
           >
-            Kitchen Rescue
+            
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          
             {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
+              <Link href={`/${page.toLowerCase()}`}>
+                <Button
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  {page}
+                </Button>
+              </Link>
             ))}
           </Box>
 

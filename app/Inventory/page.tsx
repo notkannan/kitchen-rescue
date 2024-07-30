@@ -1,8 +1,6 @@
-import { Box, Stack } from '@mui/material';
-
+import { Box, Stack, Typography } from '@mui/material';
 import Navbar from '../../components/Navbar';
-import AccordionContent from '../../components/Accordion';
-
+import Table from '@/components/Table';
 
 export default function Home() {
   return (
@@ -12,7 +10,7 @@ export default function Home() {
         bgcolor='background.default'
       >
         <Navbar />
-        <AccordionContent />
+        <Table />
       </Box>
 
   );
