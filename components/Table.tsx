@@ -19,9 +19,12 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add'; // Added this import for the Add icon
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { TextField, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
+import { collection, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore"; 
+import { db } from '../app/firebase'; // Ensure you have this import configured properly
 
 interface Data {
   id: number;
@@ -36,17 +39,6 @@ function createData(id: number, name: string, quantity: number): Data {
 const initialRows = [
   createData(1, 'Cupcake', 305),
   createData(2, 'Donut', 452),
-  createData(3, 'Eclair', 262),
-  createData(4, 'Frozen yoghurt', 11),
-  createData(5, 'Gingerbread', 356),
-  createData(6, 'Honeycomb', 408),
-  createData(7, 'Ice cream sandwich', 237),
-  createData(8, 'Jelly Bean', 375),
-  createData(9, 'KitKat', 518),
-  createData(10, 'Lollipop', 392),
-  createData(11, 'Marshmallow', 318),
-  createData(12, 'Nougat', 360),
-  createData(13, 'Oreo', 437),
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -167,10 +159,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  onAddItem: () => void; // Add this prop
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
+  const { numSelected, onAddItem } = props;
 
   return (
     <Toolbar
@@ -210,9 +203,9 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
+        <Tooltip title="Add Item">
+          <IconButton onClick={onAddItem}>
+            <AddIcon /> {/* Add this icon for adding items */}
           </IconButton>
         </Tooltip>
       )}
@@ -228,7 +221,7 @@ export default function EnhancedTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState(initialRows);
 
-  // States for the edit dialog
+  // States for the add/edit dialog
   const [open, setOpen] = React.useState(false);
   const [editRow, setEditRow] = React.useState<Data | null>(null);
   const [name, setName] = React.useState('');
@@ -272,7 +265,10 @@ export default function EnhancedTable() {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
     setPage(newPage);
   };
 
@@ -283,15 +279,59 @@ export default function EnhancedTable() {
     setPage(0);
   };
 
-  const handleEditClick = (row: Data) => {
+  const handleEdit = (row: Data) => {
     setEditRow(row);
     setName(row.name);
     setQuantity(row.quantity);
     setOpen(true);
   };
 
-  const handleDeleteClick = (id: number) => {
-    setRows(rows.filter((row) => row.id !== id));
+  const handleAddItem = () => {
+    setEditRow(null);
+    setName('');
+    setQuantity(0);
+    setOpen(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      if (editRow) {
+        const updatedRows = rows.map((row) =>
+          row.id === editRow.id ? { ...row, name, quantity } : row
+        );
+        setRows(updatedRows);
+
+        // Update item in Firestore
+        const itemRef = doc(db, "inventory", editRow.id.toString());
+        await updateDoc(itemRef, { name, quantity });
+      } else {
+        const newRow = createData(rows.length + 1, name, quantity);
+        setRows([...rows, newRow]);
+
+        // Add item to Firestore
+        await addDoc(collection(db, "inventory"), newRow);
+      }
+
+      setOpen(false);
+      setEditRow(null);
+      setName('');
+      setQuantity(0);
+    } catch (error) {
+      console.error("Error saving item: ", error);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      const updatedRows = rows.filter((row) => row.id !== id);
+      setRows(updatedRows);
+
+      // Delete item from Firestore
+      const itemRef = doc(db, "inventory", id.toString());
+      await deleteDoc(itemRef);
+    } catch (error) {
+      console.error("Error deleting item: ", error);
+    }
   };
 
   const handleDialogClose = () => {
@@ -301,23 +341,15 @@ export default function EnhancedTable() {
     setQuantity(0);
   };
 
-  const handleSave = () => {
-    if (editRow) {
-      setRows(rows.map((row) => (row.id === editRow.id ? { ...row, name, quantity } : row)));
-    }
-    handleDialogClose();
-  };
-
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Box sx={{ width: '60%', margin:'auto', mt:10 }}>
+    <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} onAddItem={handleAddItem} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -334,7 +366,7 @@ export default function EnhancedTable() {
             />
             <TableBody>
               {stableSort(rows, getComparator(order, orderBy))
-                .slice(page, page + rowsPerPage)
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -348,6 +380,7 @@ export default function EnhancedTable() {
                       tabIndex={-1}
                       key={row.id}
                       selected={isItemSelected}
+                      sx={{ bgcolor: '#FFF8DC' }} // Custom background color for rows
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
@@ -369,16 +402,12 @@ export default function EnhancedTable() {
                       </TableCell>
                       <TableCell align="left">{row.quantity}</TableCell>
                       <TableCell align="right">
-                        <Tooltip title="Edit">
-                          <IconButton onClick={() => handleEditClick(row)}>
-                            <EditIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                          <IconButton onClick={() => handleDeleteClick(row.id)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
+                        <IconButton onClick={() => handleEdit(row)} aria-label="edit">
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleDelete(row.id)} aria-label="delete">
+                          <DeleteIcon />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   );
@@ -386,7 +415,7 @@ export default function EnhancedTable() {
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: (53) * emptyRows,
+                    height: 53 * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />
@@ -405,14 +434,15 @@ export default function EnhancedTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
+      {/* Edit/Add Dialog */}
       <Dialog open={open} onClose={handleDialogClose}>
-        <DialogTitle>Edit Item</DialogTitle>
+        <DialogTitle>{editRow ? 'Edit Item' : 'Add Item'}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             label="Name"
-            type="text"
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -423,12 +453,12 @@ export default function EnhancedTable() {
             type="number"
             fullWidth
             value={quantity}
-            onChange={(e) => setQuantity(parseInt(e.target.value))}
+            onChange={(e) => setQuantity(Number(e.target.value))}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleSave}>{editRow ? 'Save' : 'Add'}</Button>
         </DialogActions>
       </Dialog>
     </Box>
