@@ -2,6 +2,8 @@
 import { Box, Stack, Typography } from '@mui/material';
 import Navbar from '../../components/Navbar';
 import Table from '@/components/Table';
+import Accordion from '@/components/Accordion';
+import DataGridDemo from '@/components/SimpleTable';
 
 
 
@@ -14,7 +16,7 @@ export default function Home() {
         bgcolor='background.default'
       >
         <Navbar />
-        <Table />
+        <Accordion />
       </Box>
 
   );

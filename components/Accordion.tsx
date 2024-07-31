@@ -33,8 +33,6 @@ const inventory = [
   },
 ]
 
-
-
 const name = 'Kannan'
 
 const mapped = inventory.map((item) => {
