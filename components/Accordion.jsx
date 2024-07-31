@@ -10,23 +10,28 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
 
 
+
 const inventory = [
   {
+    id: 1,
     name: 'Onions',
     quantity: '15',
     note: 'Gets over fast, buy them soon'
   },
   {
+    id: 2,
     name: 'Tomatoes',
     quantity: '7',
     note: 'Gets over fast, buy them soon'
   },
   {
+    id: 3,
     name: 'Bread',
     quantity: '1 loaf',
     note: ''
   },
   {
+    id: 4,
     name: 'Milk',
     quantity: '2 cartons',
     note: 'Use it quick, gets spoilt soon'
@@ -35,7 +40,9 @@ const inventory = [
 
 const name = 'Kannan'
 
-const mapped = inventory.map((item) => {
+export default function AccordionContent() {
+
+  const mapped = inventory.map((item) => {
     return(
         <Accordion>
         <AccordionSummary
@@ -56,9 +63,6 @@ const mapped = inventory.map((item) => {
       </Accordion>
     )
 })
-
-
-export default function AccordionContent() {
 
     return (
       <div className='min-w-[25vw] max-w-[50vw] m-auto mt-10'>
