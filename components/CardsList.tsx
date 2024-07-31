@@ -6,6 +6,7 @@ import { collection, getDocs, doc, deleteDoc, updateDoc, addDoc } from "firebase
 import { useState, useEffect } from "react";
 import BasicCard from "./Card";
 import Inventory from '@/interfaces/inventory';
+import AddItem from "./AddItem";
 
 export default function CardsList() {
     const [inventory, setInventory] = useState<Inventory[]>([]);
@@ -22,7 +23,18 @@ export default function CardsList() {
             setInventory(items);
         }
         fetchItems();
-    }, [inventory]);
+    }, []);
+
+    const addItem = async() => {
+        const docRef = await addDoc(collection(db, "inventory"), {
+            name: editItem.name,
+            quantity: editItem.quantity
+        });
+        setInventory(prevState => ([
+            ...prevState,
+            {id: docRef.id, name: editItem.name, quantity: editItem.quantity}
+        ]))
+    }
 
     const deleteItem = async (id: string) => {
         await deleteDoc(doc(db, "inventory", id));
@@ -37,6 +49,7 @@ export default function CardsList() {
         })
         setOpen(false);
     }
+
 
     function handleOpen(item: Inventory) {
         setEditItem(item);
@@ -77,8 +90,11 @@ export default function CardsList() {
     ));
 
     return (
+        <>
+        <AddItem onChange={handleChange} submitItem={addItem}/>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center', mt: 10 }}>
             {mappedItems}
         </Box>
+        </>
     );
 }

@@ -37,6 +37,7 @@ function BasicCard({ data, handleClose, handleOpen, handleSave, isOpen, onChangi
             type="text"
             fullWidth
             variant="standard"
+            required
             value={editItem.name}
             onChange={onChanging}
           />
@@ -46,6 +47,7 @@ function BasicCard({ data, handleClose, handleOpen, handleSave, isOpen, onChangi
             type="text"
             name='quantity'
             fullWidth
+            required
             variant="standard"
             value={editItem.quantity}
             onChange={onChanging}
