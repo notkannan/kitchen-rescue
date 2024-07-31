@@ -1,32 +1,46 @@
 'use client'
 
 import { db } from "@/app/firebase";
-import { Box, Button, Card, CardActions, CardContent, Typography } from "@mui/material";
-import { collection, getDocs } from "firebase/firestore"; 
+import { Box } from "@mui/material";
+import { collection, getDocs, doc, deleteDoc, updateDoc, addDoc } from "firebase/firestore"; 
 import { useState, useEffect } from "react";
 import BasicCard from "./Card";
-import Inventory from '@/interfaces/inventory'
+import Inventory from '@/interfaces/inventory';
 
 export default function CardsList() {
-
     const [inventory, setInventory] = useState<Inventory[]>([]);
     const [open, setOpen] = useState(false);
-    const [name, setName] = useState('');
-    const [quantity, setQuantity] = useState();
+    const [editItem, setEditItem] = useState<Inventory>({id:'', name: '', quantity: 0 });
 
     useEffect(() => {
         const fetchItems = async () => {
-            const querySnapshot = await getDocs(collection(db,"inventory"));
-            const item: Inventory[] = querySnapshot.docs.map(doc =>({
+            const querySnapshot = await getDocs(collection(db, "inventory"));
+            const items: any = querySnapshot.docs.map(doc => ({
                 id: doc.id,
-                ...doc.data() as Inventory
+                ...doc.data()
             }));
-            setInventory(item);
+            setInventory(items);
         }
         fetchItems();
-    },[]);
+    }, [inventory]);
 
-    function handleOpen() {
+    const deleteItem = async (id: string) => {
+        await deleteDoc(doc(db, "inventory", id));
+    }
+
+    const updateItem = async (id: string) => {
+        const editableItem = doc(db,"inventory", id);
+
+        await updateDoc(editableItem, {
+            name: editItem.name,
+            quantity: editItem.quantity
+        })
+        setOpen(false);
+    }
+
+    function handleOpen(item: Inventory) {
+        setEditItem(item);
+        console.log(item.id)
         setOpen(true);
     }
 
@@ -34,31 +48,37 @@ export default function CardsList() {
         setOpen(false);
     }
 
-    function handleSave() {
-        console.log("Saved")
+    // function handleSave() {
+    //     console.log("Saved");
+    //     console.log(`name: ${editItem.name} | quantity: ${editItem.quantity}`);
+    //     setOpen(false);
+    // }
+
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = e.target;
+        setEditItem(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     }
 
-    const mappedItems = inventory.map(item => {
-        return(
-            <BasicCard 
-                data={item} 
-                handleClose= {handleClose}
-                handleOpen= {handleOpen}
-                handleSave= {handleSave}
-                isOpen={open}
-            />
-        )
-    })
-
-
+    const mappedItems = inventory.map(item => (
+        <BasicCard 
+            key={item.id} 
+            data={item} 
+            handleClose={handleClose}
+            handleOpen={() => handleOpen(item)}
+            handleSave={() => updateItem(item.id)}
+            isOpen={open && editItem.id === item.id}
+            onChanging={handleChange}
+            editItem={editItem}
+            onDelete= {() => deleteItem(item.id)}
+        />
+    ));
 
     return (
-        <Box sx={{display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center',}}>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center', mt: 10 }}>
             {mappedItems}
         </Box>
-    )
+    );
 }
-
-
-
-
