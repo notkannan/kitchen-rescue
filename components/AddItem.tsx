@@ -10,7 +10,7 @@ export default function AddItem({onChange, submitItem, modalVisibility, formOpen
             <AddIcon />
         </Fab>
         <Dialog open={modalVisibility} onClose={formClose}>
-        <Box sx={{bgcolor:'#fff', margin: 'auto', padding: 3, borderRadius: 4}}>
+        <Box sx={{bgcolor:'#fff', margin: 'auto', padding: 2, borderRadius: '15px'}}>
             <DialogTitle>Add a new item</DialogTitle>
             <DialogContent>
             <DialogContentText>
