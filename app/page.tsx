@@ -1,7 +1,5 @@
-import { Box, Stack, Typography } from '@mui/material';
-
+import { Box, Typography } from '@mui/material';
 import Navbar from '../components/Navbar';
-import AccordionContent from '../components/Accordion';
 
 
 export default function Home() {
@@ -10,6 +8,7 @@ export default function Home() {
         width='100vw'
         height='100vh'
         bgcolor='background.default'
+        overflow='auto'
       >
         <Navbar />
         <Typography
@@ -17,7 +16,7 @@ export default function Home() {
           sx={
             {
               mt: 10,
-              color: 'black',
+              color: 'primary.light',
               textAlign: 'center',
               fontWeight: 300
             }

@@ -1,25 +1,35 @@
 'use client'
 
 import * as React from 'react';
-import { Card, CardActions, CardContent, Button, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material';
-import  Inventory from '@/interfaces/inventory';
+import { Card, CardActions, CardContent, Button, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Box } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+
 
 
 function BasicCard({ data, handleClose, handleOpen, handleSave, isOpen, onChanging, editItem, onDelete }: any) {
   return (
     <>
-      <Card sx={{ width: 275 }}>
+      <Card sx={{ width: 275, borderRadius: 5, bgcolor:'secondary.main' }}>
         <CardContent>
-          <Typography variant="h5" component="div">
+          <Typography variant="h6" align='center' mb={2} mr={0.5} color='primary.light'>
             {data.name}
           </Typography>
-          <Typography variant="h6" align='center'>
-            {data.quantity}
-          </Typography>
+          <Box className="flex flex-row justify-center items-center">
+            <Button><RemoveIcon /></Button>
+                <div className='w-[75px] h-[75px] rounded-[50%] flex flex-col justify-center items-center text-2xl text-[#D6536D]'>    
+                    <Typography variant="h5" color='primary.light'>
+                        {data.quantity}
+                    </Typography>
+                </div> 
+            <Button><AddIcon /></Button>
+          </Box>
         </CardContent>
-        <CardActions sx={{ display: 'flex', justifyContent: 'flex' }}>
-          <Button size="small" onClick={handleOpen}>Edit</Button>
-          <Button size="small" onClick={onDelete}>Delete</Button>
+        <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button size="small" onClick={handleOpen}><EditIcon /></Button>
+          <Button size="small" onClick={onDelete}><DeleteIcon /></Button>
         </CardActions>
       </Card>
 
