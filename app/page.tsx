@@ -13,15 +13,16 @@ export default async function Home() {
         justifyContent: 'center',
         alignItems: 'center',
         width: '100vw',
-        backgroundImage: 'url(/landing-page-bg.webp)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        bgcolor: 'secondary.main'
+        // backgroundImage: 'url(/landing-page-bg.webp)',
+        // backgroundSize: 'cover',
+        // backgroundPosition: 'center',
+        // backgroundRepeat: 'no-repeat',
       }}
     >
       <Box
         sx={{
-          backgroundColor: 'background.default',
+          backgroundColor: 'secondary.main',
           padding: { xs: 4, sm: 6 },
           borderRadius: 4,
           textAlign: 'center',

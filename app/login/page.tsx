@@ -3,8 +3,11 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Container, Typography, TextField, Button, Box, Alert } from '@mui/material';
 import Link from 'next/link';
+import Image from 'next/image';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import Footer from '@/components/Footer';
+import MiniFooter from '@/components/MiniFooter';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -23,8 +26,7 @@ export default function Login() {
       });
 
       if (result?.error) {
-        console.log('SignIn error:', result.error); // Add this log
-        // Custom error messages
+        console.log('SignIn error:', result.error);
         switch (result.error) {
           case 'InvalidCredentials':
             setError('Invalid email or password. Please try again.');
@@ -48,96 +50,88 @@ export default function Login() {
   };
 
   return (
-    <Container maxWidth="xs" sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundImage: 'url(/landing-page-bg.webp)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      height: '100vh'
-    }} 
-    >
-      <Box sx={{ 
-        backgroundColor: 'background.default',
-        padding: { xs: 4, sm: 6 },
-        borderRadius: 4,
-        textAlign: 'center',
-        maxWidth: '90%',
-        width: '400px',
-        }}
-      >
-        <Typography component="h1" variant="h5" sx={{
-          fontWeight: 'bold',
-          marginBottom: 3,
-          fontSize: { xs: '2.5rem', sm: '3rem' },
-          color: 'primary.main'
-        }}>
-          Login
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            sx={{
-              outline: 'primary.main'
-            }}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{outline: 'primary.main'}}
-          />
-          {error && (
-            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-              {error}
-            </Alert>
-          )}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained" 
-            color="primary" 
-            sx={{ 
-              py: 1,
-              fontSize: '1.1rem',
-              textTransform: 'none',
-              backgroundColor: 'secondary.main',
-              marginTop: 3,
-              '&:hover': {
-                  backgroundColor: 'secondary.dark',
-              }
-            }}
-          >
-            Log In
-          </Button>
-          <Typography sx={{ mt: 2, color: 'primary.main', fontWeight: 'light'}}>
+    <>
+      <div className="bg-white flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 w-[100vw]">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <div className='flex flex-row justify-center gap-1'>
+          <LocalDiningIcon fontSize='large' />
+          <p className='text-3xl'>💙</p>
+          </div>
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Welcome back fellow cook!
+          </h2>
+        </div>
+
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                Email address
+              </label>
+              <div className="mt-2">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                  Password
+                </label>
+                <div className="text-sm">
+                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                    Forgot password?
+                  </a>
+                </div>
+              </div>
+              <div className="mt-2">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="text-red-500 text-sm mt-2">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <button
+                type="submit"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Sign in
+              </button>
+            </div>
+          </form>
+
+          <p className="mt-10 text-center text-sm text-gray-500">
             Don't have an account yet?{' '}
-            <Link href="/signup" passHref>
-              <Typography component="span" sx={{ color: 'secondary.main', cursor: 'pointer', fontWeight: 'light'}}>
-                Sign Up
-              </Typography>
+            <Link href="/signup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+              Sign Up
             </Link>
-          </Typography>
-        </Box>
-      </Box>
-    </Container>
+          </p>
+        </div>
+      </div>
+      <MiniFooter />
+    </>
   );
 }

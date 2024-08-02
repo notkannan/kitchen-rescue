@@ -59,48 +59,50 @@ export default function CardsList() {
     }
 
     const deleteItem = async (id: string) => {
-        await deleteDoc(doc(db, "inventory", id));
         setInventory(prevState => prevState.filter(item => item.id !== id));
+        await deleteDoc(doc(db, "inventory", id));
+
     }
 
     const updateItem = async (id: string) => {
         const editableItem = doc(db,"inventory", id);
+        setInventory(prevState => prevState.map(item => 
+            item.id === id ? { ...item, ...editItem } : item
+        ));
+    
+        setOpen(false);
 
         await updateDoc(editableItem, {
             name: editItem.name,
             quantity: editItem.quantity
         });
         setOpen(false);
-        setInventory(prevState => prevState.map(item => 
-            item.id === id ? { ...item, ...editItem } : item
-        ));
-    
-        setOpen(false);
+
     }
 
     const incrementQuantity = async (id: string) => {
         const item = inventory.find(item => item.id === id);
+        setInventory(prevState => prevState.map(item => 
+            item.id === id ? { ...item, quantity: Number(item.quantity) + 1} : item
+        ));
         if (item) {
             const newQuantity = Number(item.quantity) + 1;
             const itemRef = doc(db, "inventory", id);
             await updateDoc(itemRef, { quantity: newQuantity });
-            
-            setInventory(prevState => prevState.map(item => 
-                item.id === id ? { ...item, quantity: newQuantity } : item
-            ));
+        
         }
     };
     
     const decrementQuantity = async (id: string) => {
         const item = inventory.find(item => item.id === id);
+        setInventory(prevState => prevState.map(item => 
+            item.id === id ? { ...item, quantity: Number(item.quantity) - 1 } : item
+        ));
         if (item && Number(item.quantity) > 0) {
             const newQuantity = Number(item.quantity) - 1;
             const itemRef = doc(db, "inventory", id);
             await updateDoc(itemRef, { quantity: newQuantity });
             
-            setInventory(prevState => prevState.map(item => 
-                item.id === id ? { ...item, quantity: newQuantity } : item
-            ));
         }
     };
 
