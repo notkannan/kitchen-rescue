@@ -1,5 +1,5 @@
 import CardsList from "@/components/CardsList";
-import { Container } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
@@ -13,7 +13,14 @@ export default async function Dashboard() {
   }
 
   return (
-    <Container sx={{ display: "flex", justifyContent: "center", mt: 10, width: '100vw'}}>
-    </Container>
+    <Box
+      width='100vw'
+      height='100vh'
+      sx={{
+        bgcolor:'pink'
+      }}
+    >
+      <Typography>Hi</Typography>
+    </Box>
   );
 }

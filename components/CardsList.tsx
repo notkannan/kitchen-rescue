@@ -3,6 +3,7 @@
 import { db } from "@/app/firebase";
 import { Box, Typography, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { collection, getDocs, doc, deleteDoc, updateDoc, addDoc } from "firebase/firestore"; 
+import { getAuth } from "firebase/auth";
 import { useState, useEffect } from "react";
 import BasicCard from "./Card";
 import Inventory from '@/interfaces/inventory';
@@ -15,29 +16,46 @@ export default function CardsList() {
     const [editItem, setEditItem] = useState<Inventory>({id:'', name: '', quantity: 0 });
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [sortBy, setSortBy] = useState<'name' | 'quantityAsc' | 'quantityDesc'>('name');
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const fetchItems = async () => {
-            const querySnapshot = await getDocs(collection(db, "inventory"));
-            const items: any = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setInventory(items);
-        }
-        fetchItems();
+        const auth = getAuth();
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            setUser(currentUser);
+            if (currentUser) {
+                fetchItems(currentUser.uid);
+            } else {
+                setInventory([]);
+            }
+        });
+
+        return () => unsubscribe();
     }, []);
 
+    const fetchItems = async (userId: string) => {
+        const querySnapshot = await getDocs(collection(db, "inventory"));
+        const items: any = querySnapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .filter(item => item.userId === userId);
+        setInventory(items);
+    }
+
     const addItem = async() => {
-        const docRef = await addDoc(collection(db, "inventory"), {
-            name: editItem.name,
-            quantity: editItem.quantity
-        });
-        setInventory(prevState => ([
-            ...prevState,
-            {id: docRef.id, name: editItem.name, quantity: editItem.quantity}
-        ]))
-        setAddFormVisibility(false);
+        if (user) {
+            const docRef = await addDoc(collection(db, "inventory"), {
+                name: editItem.name,
+                quantity: Number(editItem.quantity),
+                userId: user.uid
+            });
+            setInventory(prevState => ([
+                ...prevState,
+                {id: docRef.id, name: editItem.name, quantity: Number(editItem.quantity), userId: user.uid}
+            ]))
+            setAddFormVisibility(false);
+        }
     }
 
     const deleteItem = async (id: string) => {
@@ -53,7 +71,38 @@ export default function CardsList() {
             quantity: editItem.quantity
         });
         setOpen(false);
+        setInventory(prevState => prevState.map(item => 
+            item.id === id ? { ...item, ...editItem } : item
+        ));
+    
+        setOpen(false);
     }
+
+    const incrementQuantity = async (id: string) => {
+        const item = inventory.find(item => item.id === id);
+        if (item) {
+            const newQuantity = Number(item.quantity) + 1;
+            const itemRef = doc(db, "inventory", id);
+            await updateDoc(itemRef, { quantity: newQuantity });
+            
+            setInventory(prevState => prevState.map(item => 
+                item.id === id ? { ...item, quantity: newQuantity } : item
+            ));
+        }
+    };
+    
+    const decrementQuantity = async (id: string) => {
+        const item = inventory.find(item => item.id === id);
+        if (item && Number(item.quantity) > 0) {
+            const newQuantity = Number(item.quantity) - 1;
+            const itemRef = doc(db, "inventory", id);
+            await updateDoc(itemRef, { quantity: newQuantity });
+            
+            setInventory(prevState => prevState.map(item => 
+                item.id === id ? { ...item, quantity: newQuantity } : item
+            ));
+        }
+    };
 
     function handleOpen(item: Inventory) {
         setEditItem(item);
@@ -106,37 +155,45 @@ export default function CardsList() {
             onChanging={handleChange}
             editItem={editItem}
             onDelete={() => deleteItem(item.id)}
+            onIncrement={() => incrementQuantity(item.id)}
+            onDecrement={() => decrementQuantity(item.id)}
         />
     ));
 
     return (
         <>
-            <AddItem onChange={handleChange} submitItem={addItem} formOpen={handleAddFormOpen} formClose={handleAddFormClose} modalVisibility={addFormVisibility} />
+            {user ? (
+                <>
+                    <AddItem onChange={handleChange} submitItem={addItem} formOpen={handleAddFormOpen} formClose={handleAddFormClose} modalVisibility={addFormVisibility} />
 
-            <Box sx={{ mb: 2, mt: 2}} className='flex flex-row gap-4 justify-end'>
-                <TextField
-                    label="Search by Name"
-                    variant="outlined"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <FormControl>
-                    <InputLabel>Sort By</InputLabel>
-                    <Select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as 'name' | 'quantityAsc' | 'quantityDesc')}
-                        label="Sort By"
-                    >
-                        <MenuItem value="name">Name</MenuItem>
-                        <MenuItem value="quantityAsc">Quantity (Low to High)</MenuItem>
-                        <MenuItem value="quantityDesc">Quantity (High to Low)</MenuItem>
-                    </Select>
-                </FormControl>
-            </Box>
+                    <Box sx={{ mb: 2, mt: 2}} className='flex flex-row gap-4 justify-end'>
+                        <TextField
+                            label="Search by Name"
+                            variant="outlined"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <FormControl>
+                            <InputLabel>Sort By</InputLabel>
+                            <Select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value as 'name' | 'quantityAsc' | 'quantityDesc')}
+                                label="Sort By"
+                            >
+                                <MenuItem value="name">Name</MenuItem>
+                                <MenuItem value="quantityAsc">Quantity (Low to High)</MenuItem>
+                                <MenuItem value="quantityDesc">Quantity (High to Low)</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
 
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center', mt: 5 }}>
-                {mappedItems}
-            </Box>
+                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center', mt: 5 }}>
+                        {mappedItems}
+                    </Box>
+                </>
+            ) : (
+                <Typography variant="h6">Please log in to view your pantry items.</Typography>
+            )}
         </>
     );
 }

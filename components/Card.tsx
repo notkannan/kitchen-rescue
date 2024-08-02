@@ -7,9 +7,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
+function BasicCard({ data, handleClose, handleOpen, handleSave, isOpen, onChanging, editItem, onDelete, onIncrement, onDecrement }: any) {
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    onChanging({
+      target: {
+        name: 'quantity',
+        value: value === '' ? '' : Number(value)
+      }
+    });
+  };
 
-
-function BasicCard({ data, handleClose, handleOpen, handleSave, isOpen, onChanging, editItem, onDelete }: any) {
   return (
     <>
       <Card sx={{ width: 275, borderRadius: 5, bgcolor:'secondary.main' }}>
@@ -18,13 +26,13 @@ function BasicCard({ data, handleClose, handleOpen, handleSave, isOpen, onChangi
             {data.name}
           </Typography>
           <Box className="flex flex-row justify-center items-center">
-            <Button><RemoveIcon /></Button>
-                <div className='w-[75px] h-[75px] rounded-[50%] flex flex-col justify-center items-center text-2xl text-[#D6536D]'>    
-                    <Typography variant="h5" color='primary.light'>
-                        {data.quantity}
-                    </Typography>
-                </div> 
-            <Button><AddIcon /></Button>
+            <Button onClick={onDecrement}><RemoveIcon /></Button>
+            <div className='w-[75px] h-[75px] rounded-[50%] flex flex-col justify-center items-center text-2xl text-[#D6536D]'>    
+                <Typography variant="h5" color='primary.light'>
+                    {data.quantity}
+                </Typography>
+            </div> 
+            <Button onClick={onIncrement}><AddIcon /></Button>
           </Box>
         </CardContent>
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -54,13 +62,14 @@ function BasicCard({ data, handleClose, handleOpen, handleSave, isOpen, onChangi
           <TextField
             margin="dense"
             label="Quantity"
-            type="text"
+            type="number"
             name='quantity'
             fullWidth
             required
             variant="standard"
             value={editItem.quantity}
-            onChange={onChanging}
+            onChange={handleQuantityChange}
+            inputProps={{ min: "0", step: "1" }}
           />
         </DialogContent>
         <DialogActions>
