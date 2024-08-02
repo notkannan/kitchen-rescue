@@ -11,7 +11,7 @@ export default function Loading(){
             height='100vh'
             bgcolor='background.default'
         >
-        <Navbar />
+        {/* <Navbar /> */}
         <div className='flex flex-row justify-center items-center h-[100vh]'>
         <ColorRing
             visible={true}
