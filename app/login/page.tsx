@@ -3,88 +3,141 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { Container, Typography, TextField, Button, Box, Alert } from '@mui/material';
 import Link from 'next/link';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
+    setError('');
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      });
 
-    if (result?.error) {
-      console.error(result.error);
-    } else {
-      router.push('/dashboard');
+      if (result?.error) {
+        console.log('SignIn error:', result.error); // Add this log
+        // Custom error messages
+        switch (result.error) {
+          case 'InvalidCredentials':
+            setError('Invalid email or password. Please try again.');
+            break;
+          case 'TooManyAttempts':
+            setError('Too many login attempts. Please try again later.');
+            break;
+          case 'ServerError':
+            setError('An error occurred during login. Please try again.');
+            break;
+          default:
+            setError('An unexpected error occurred. Please try again.');
+        }
+      } else {
+        router.push('/inventory');
+      }
+    } catch (error) {
+      setError('An unexpected error occurred. Please try again.');
+      console.error('An unexpected error happened:', error);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" defaultValue="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign in
-            </button>
-          </div>
-        </form>
-        <div className="text-center">
-          <Link href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-            Don't have an account? Sign up
-          </Link>
-        </div>
-      </div>
-    </div>
+    <Container maxWidth="xs" sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundImage: 'url(/landing-page-bg.webp)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      height: '100vh'
+    }} 
+    >
+      <Box sx={{ 
+        backgroundColor: 'background.default',
+        padding: { xs: 4, sm: 6 },
+        borderRadius: 4,
+        textAlign: 'center',
+        maxWidth: '90%',
+        width: '400px',
+        }}
+      >
+        <Typography component="h1" variant="h5" sx={{
+          fontWeight: 'bold',
+          marginBottom: 3,
+          fontSize: { xs: '2.5rem', sm: '3rem' },
+          color: 'primary.main'
+        }}>
+          Login
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            sx={{
+              outline: 'primary.main'
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{outline: 'primary.main'}}
+          />
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained" 
+            color="primary" 
+            sx={{ 
+              py: 1,
+              fontSize: '1.1rem',
+              textTransform: 'none',
+              backgroundColor: 'secondary.main',
+              marginTop: 3,
+              '&:hover': {
+                  backgroundColor: 'secondary.dark',
+              }
+            }}
+          >
+            Log In
+          </Button>
+          <Typography sx={{ mt: 2, color: 'primary.main', fontWeight: 'light'}}>
+            Don't have an account yet?{' '}
+            <Link href="/signup" passHref>
+              <Typography component="span" sx={{ color: 'secondary.main', cursor: 'pointer', fontWeight: 'light'}}>
+                Sign Up
+              </Typography>
+            </Link>
+          </Typography>
+        </Box>
+      </Box>
+    </Container>
   );
 }

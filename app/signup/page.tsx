@@ -1,15 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/app/firebase';
-import { useRouter } from 'next/navigation';
+import { Container, Typography, TextField, Button, Box, Alert, FormHelperText } from '@mui/material';
 import Link from 'next/link';
 
-export default function SignUp() {
+// Password regex: At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
@@ -17,102 +20,125 @@ export default function SignUp() {
     e.preventDefault();
     setError('');
 
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
+    if (!passwordRegex.test(password)) {
+      setError('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.');
       return;
     }
 
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       router.push('/login');
-    } catch (error) {
+    } catch (error: any) {
+      // Custom error messages for Firebase auth errors
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          setError('This email is already in use. Please try a different one.');
+          break;
+        case 'auth/invalid-email':
+          setError('Invalid email address. Please check and try again.');
+          break;
+        case 'auth/weak-password':
+          setError('The password is too weak. Please choose a stronger password.');
+          break;
+        case 'auth/network-request-failed':
+          setError('Network error. Please check your internet connection and try again.');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many requests. Please try again later.');
+          break;
+        default:
+          setError('An error occurred during sign up. Please try again.');
+      }
       console.error('Error signing up:', error);
-      setError('Failed to create an account. Please try again.');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" defaultValue="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirm-password" className="sr-only">
-                Confirm Password
-              </label>
-              <input
-                id="confirm-password"
-                name="confirm-password"
-                type="password"
-                autoComplete="new-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
+    <Container maxWidth="xs" sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundImage: 'url(/landing-page-bg.webp)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      height: '100vh'
+    }}>
+      <Box sx={{
+        backgroundColor: 'background.default',
+        padding: { xs: 4, sm: 6 },
+        borderRadius: 4,
+        textAlign: 'center',
+        maxWidth: '90%',
+        width: '400px',
+      }}>
+        <Typography component="h1" variant="h5" sx={{
+          fontWeight: 'bold',
+          marginBottom: 3,
+          fontSize: { xs: '2.5rem', sm: '3rem' },
+          color: 'primary.main'
+        }}>
+          Sign Up
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            helperText="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+          />
+          <FormHelperText />
           {error && (
-            <div className="text-red-500 text-sm text-center">
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
               {error}
-            </div>
+            </Alert>
           )}
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign up
-            </button>
-          </div>
-        </form>
-        <div className="text-center">
-          <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-            Already have an account? Sign in
-          </Link>
-        </div>
-      </div>
-    </div>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ 
+              py: 1,
+              fontSize: '1.1rem',
+              textTransform: 'none',
+              backgroundColor: 'secondary.main',
+              marginTop: 3,
+              '&:hover': {
+                  backgroundColor: 'secondary.dark',
+              }
+            }}
+          >
+            Sign Up
+          </Button>
+          <Typography sx={{ mt: 2, color: 'primary.main', fontWeight: 'light'}}>
+            Already Registered?{' '}
+            <Link href="/login" passHref>
+              <Typography component="span" sx={{ color: 'secondary.main', fontWeight: 'light', cursor: 'pointer'}}>
+                Log In
+              </Typography>
+            </Link>
+          </Typography>
+        </Box>
+      </Box>
+    </Container>
   );
 }

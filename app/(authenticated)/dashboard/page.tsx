@@ -1,33 +1,19 @@
-'use client';
+import CardsList from "@/components/CardsList";
+import { Container } from "@mui/material";
+import { getServerSession } from "next-auth/next";
+import { redirect } from "next/navigation";
+import { authOptions } from "../../api/auth/[...nextauth]/route";
 
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import Navbar from '@/components/Navbar';
+export default async function Dashboard() {
 
-export default function Dashboard() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const session = await getServerSession(authOptions);
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
-    }
-  }, [status, router]);
-
-  if (status === 'loading') {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (!session) {
+    redirect('/login');
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome to your Dashboard</h1>
-          <p className="mt-2 text-sm text-gray-600">You are logged in as {session?.user?.email}</p>
-        </div>
-      </div>
-    </div>
+    <Container sx={{ display: "flex", justifyContent: "center", mt: 10, width: '100vw'}}>
+    </Container>
   );
 }

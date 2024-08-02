@@ -1,10 +1,10 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth, { AuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { FirestoreAdapter } from '@next-auth/firebase-adapter';
-import { db, auth } from '@/app/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/app/firebase';
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -13,44 +13,57 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-        
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Invalid Credentials');
+        }
         try {
           const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
-          return {
-            id: userCredential.user.uid,
-            email: userCredential.user.email,
-            name: userCredential.user.displayName,
-          };
-        } catch (error) {
-          console.error('Error during sign in:', error);
+          if (userCredential.user) {
+            return {
+              id: userCredential.user.uid,
+              email: userCredential.user.email,
+            };
+          }
           return null;
+        } catch (error: any) {
+          console.error('Error during authentication:', error);
+          // Throw specific errors based on Firebase error codes
+          switch (error.code) {
+            case 'auth/user-not-found':
+            case 'auth/invalid-credential':
+              throw new Error('InvalidCredentials');
+            case 'auth/too-many-requests':
+              throw new Error('TooManyAttempts');
+            default:
+              throw new Error('ServerError');
+          }
         }
       }
-    })
+    }),
   ],
-  adapter: FirestoreAdapter(db as any),
+  adapter: FirestoreAdapter(auth),
   session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.uid = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session?.user) {
-        session.user.id = token.uid as string;
-      }
-      return session;
-    },
+    strategy: 'jwt',
   },
   pages: {
     signIn: '/login',
   },
-  secret: process.env.NEXTAUTH_SECRET,
-});
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub!;  // Use the subject claim as the user ID
+      }
+      return session;
+    },
+  },
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

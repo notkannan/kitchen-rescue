@@ -1,30 +1,35 @@
-'use client'
+'use client';
 
-import Navbar from "@/components/Navbar";
-import { Box, Typography } from "@mui/material";
-import { ColorRing } from 'react-loader-spinner';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import ResponsiveAppBar from '@/components/Navbar';
+import { Box, CircularProgress } from '@mui/material';
 
-export default function Loading(){
+export default function AuthenticatedLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  if (status === 'loading') {
     return (
-        <Box
-            width='100vw'
-            height='100vh'
-            bgcolor='background.default'
-        >
-        {/* <Navbar /> */}
-        <div className='flex flex-row justify-center items-center h-[100vh]'>
-        <ColorRing
-            visible={true}
-            height="80"
-            width="80"
-            ariaLabel="color-ring-loading"
-            wrapperStyle={{}}
-            wrapperClass="color-ring-wrapper"
-            colors={['#B13C57', '#B13C57', '#B13C57', '#B13C57', '#B13C57']}
-        />
-        </div>
-        
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress sx={{mb: 5}}/>
       </Box>
+    );
+  }
 
-    )
+  if (!session) {
+    router.push('/login');
+    return null;
+  }
+
+  return (
+    <>
+      <ResponsiveAppBar />
+      {children}
+    </>
+  );
 }
