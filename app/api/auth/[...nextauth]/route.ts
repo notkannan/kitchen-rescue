@@ -27,7 +27,6 @@ export const authOptions: AuthOptions = {
           return null;
         } catch (error: any) {
           console.error('Error during authentication:', error);
-          // Throw specific errors based on Firebase error codes
           switch (error.code) {
             case 'auth/user-not-found':
             case 'auth/invalid-credential':
@@ -57,7 +56,7 @@ export const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.sub!;  // Use the subject claim as the user ID
+        session.user.id = token.sub!;
       }
       return session;
     },

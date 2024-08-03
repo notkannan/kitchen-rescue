@@ -41,7 +41,7 @@ export default function Login() {
             setError('An unexpected error occurred. Please try again.');
         }
       } else {
-        router.push('/inventory');
+        router.push('/dashboard');
       }
     } catch (error) {
       setError('An unexpected error occurred. Please try again.');
@@ -88,11 +88,6 @@ export default function Login() {
                   <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                     Password
                   </label>
-                  <div className="text-sm">
-                    <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-950">
-                      Forgot password?
-                    </a>
-                  </div>
                 </div>
                 <div className="mt-2">
                   <input

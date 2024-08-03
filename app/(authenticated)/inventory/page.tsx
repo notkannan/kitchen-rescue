@@ -1,10 +1,15 @@
 'use client'
-import { Box, Typography } from '@mui/material';
-import Navbar from '../../../components/Navbar';
+import { Box } from '@mui/material';
 import CardsList from '@/components/CardsList';
 import Footer from '@/components/Footer';
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
+
+
+
   return (
     <Box
       sx={{
