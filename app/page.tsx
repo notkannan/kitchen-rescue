@@ -52,7 +52,7 @@ export default function SignInSide() {
               mx: 4,
               display: 'flex',
               flexDirection: 'column',
-              mt: '250px'
+              mt: '150px'
             }}
           >
               <LocalDiningIcon fontSize='large' sx={{

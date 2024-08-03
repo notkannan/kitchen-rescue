@@ -16,8 +16,8 @@ import MenuItem from '@mui/material/MenuItem';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import Link from 'next/link';
 
-const pages = ['Inventory','Recipes'];
-const settings = ['Account', 'Signout'];
+const pages = ['Dashboard','Inventory','Recipes'];
+const settings = ['Signout'];
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -40,7 +40,7 @@ function Navbar() {
 
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: 'primary.main' }}>
+    <AppBar position="static" sx={{ backgroundColor: 'primary.dark' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <LocalDiningIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />

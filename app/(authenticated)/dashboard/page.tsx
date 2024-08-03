@@ -17,7 +17,7 @@ export default async function Dashboard() {
       width='100vw'
       height='100vh'
       sx={{
-        bgcolor:'pink'
+        bgcolor:'background.default'
       }}
     >
       <Typography>Hi</Typography>

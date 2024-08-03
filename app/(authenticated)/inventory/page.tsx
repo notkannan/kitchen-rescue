@@ -2,30 +2,36 @@
 import { Box, Typography } from '@mui/material';
 import Navbar from '../../../components/Navbar';
 import CardsList from '@/components/CardsList';
-
+import Footer from '@/components/Footer';
 
 export default function Home() {
-
-
   return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        width: '100vw',
+        bgcolor: 'background.default',
+      }}
+    >
       <Box
-        width='100vw'
-        height='100vh'
-        bgcolor='background.default'
-        overflow='auto'
+        component="main"
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
+          mt: 5,
+          mb: 4,
+        }}
       >
-        <Navbar />
-        <div className='w-[60vw] mt-10 m-auto'>
-          <Typography
-            variant='h4'
-            color='primary.light'
-          >
-            Welcome to your inventory, Kannan.
-          </Typography>
+        <Box sx={{ width: '60vw', maxWidth: '1200px' }}>
           <CardsList />
-        </div>
-        
+        </Box>
       </Box>
-
+      <Footer />
+    </Box>
   );
 }

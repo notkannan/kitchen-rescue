@@ -7,6 +7,7 @@ import { getAuth } from "firebase/auth";
 import { useState, useEffect } from "react";
 import BasicCard from "./Card";
 import Inventory from '@/interfaces/inventory';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import AddItem from "./AddItem";
 
 export default function CardsList() {
@@ -32,6 +33,8 @@ export default function CardsList() {
         return () => unsubscribe();
     }, []);
 
+  console.log(user)
+
     const fetchItems = async (userId: string) => {
         const querySnapshot = await getDocs(collection(db, "inventory"));
         const items: any = querySnapshot.docs
@@ -50,11 +53,12 @@ export default function CardsList() {
                 quantity: Number(editItem.quantity),
                 userId: user.uid
             });
+            setAddFormVisibility(false);
             setInventory(prevState => ([
                 ...prevState,
                 {id: docRef.id, name: editItem.name, quantity: Number(editItem.quantity), userId: user.uid}
             ]))
-            setAddFormVisibility(false);
+
         }
     }
 
@@ -167,13 +171,26 @@ export default function CardsList() {
             {user ? (
                 <>
                     <AddItem onChange={handleChange} submitItem={addItem} formOpen={handleAddFormOpen} formClose={handleAddFormClose} modalVisibility={addFormVisibility} />
-
-                    <Box sx={{ mb: 2, mt: 2}} className='flex flex-row gap-4 justify-end'>
+                    <Typography
+                        variant='h4'
+                        color='primary.light'
+                        mb={4}
+                        ml={4}
+                    >
+                        Welcome to your inventory<br />
+                        <span className="text-sm text-gray-900">This inventory is linked to {user.email}</span>
+                    </Typography>
+                    <Box sx={{ mb: 2, mt: 2}} className='flex flex-row gap-4 ml-6'>
                         <TextField
                             label="Search by Name"
                             variant="outlined"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: '25px',  // Adjust this value to control the roundness
+                                },
+                            }}
                         />
                         <FormControl>
                             <InputLabel>Sort By</InputLabel>
@@ -181,6 +198,9 @@ export default function CardsList() {
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value as 'name' | 'quantityAsc' | 'quantityDesc')}
                                 label="Sort By"
+                                sx={{
+                                    borderRadius:'25px'
+                                }}
                             >
                                 <MenuItem value="name">Name</MenuItem>
                                 <MenuItem value="quantityAsc">Quantity (Low to High)</MenuItem>
