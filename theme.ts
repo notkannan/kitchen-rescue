@@ -11,13 +11,16 @@ const roboto = Roboto({
 const theme = createTheme({
   typography: {
     fontFamily: roboto.style.fontFamily,
+      button: {
+        textTransform: 'none'
+      },
   },
 
   palette: {
     primary:{
         light:'#4A4A4A',
         main:'#4f46e5',
-        dark:'#B13C57',
+        dark:'#1e1b4b',
     },
 
     secondary:{
@@ -25,7 +28,7 @@ const theme = createTheme({
     },
 
     background:{
-        default:'#fff9fb'
+        default:'#F3F4F8'
     },
     
   }
