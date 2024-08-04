@@ -91,7 +91,7 @@ const CameraComponent = () => {
 
   return (
     <div>
-      <Fab onClick={handleOpen} aria-label="add" sx={{bgcolor: 'primary.main', color:'white'}}>
+      <Fab onClick={handleOpen} aria-label="add" sx={{bgcolor: 'primary.main', color:'white', '&:hover':{bgcolor:'primary.dark'}}}>
         <CameraAltIcon/>
       </Fab>
       <CameraDialog 

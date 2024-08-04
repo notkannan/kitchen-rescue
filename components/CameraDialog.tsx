@@ -70,7 +70,7 @@ const CameraDialog: React.FC<CameraDialogProps> = ({ open, onClose, onItemIdenti
         )}
       </DialogContent>
       <DialogActions sx={{ bgcolor: 'background.default', p: 2, display: 'flex', justifyContent: 'center' }}>
-        <Button onClick={onClose} color="secondary" variant="outlined" sx={{ textTransform: 'none' }}>
+        <Button onClick={onClose}  variant="outlined" sx={{ textTransform: 'none', color: "primary.main" }}>
           Cancel
         </Button>
         {image && (
