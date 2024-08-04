@@ -24,7 +24,7 @@ export default function Dashboard() {
         variant="h4"
         sx={{color:'primary.light', ml:3}}
       >
-        We've got some stats for you.
+        We&apos;ve got some stats for you.
       </Typography>
 
     {/* Grid Starts Here */}
@@ -46,7 +46,7 @@ export default function Dashboard() {
           fontWeight='light'
           variant="h6"
         >
-          Your inventory, summarized. See what you're running high and low on.
+          Your inventory, summarized. See what you&apos;re running high and low on.
         </Typography>
         <Button
           onClick={handleInventoryPush}

@@ -103,7 +103,7 @@ function Navbar() {
               }}
             >
               {pages.map((page) => (
-                <Link href={`/${page.toLowerCase()}`}>
+                <Link key={page} href={`/${page.toLowerCase()}`}>
                   <MenuItem key={page} onClick={handleCloseNavMenu}>
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
@@ -132,7 +132,7 @@ function Navbar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           
             {pages.map((page) => (
-              <Link href={`/${page.toLowerCase()}`}>
+              <Link key={page} href={`/${page.toLowerCase()}`}>
                 <Button
                   key={page}
                   onClick={handleCloseNavMenu}

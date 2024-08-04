@@ -1,7 +1,7 @@
 import React from 'react'
 import LocalDiningIcon from '@mui/icons-material/LocalDining'
 
-export default function() {
+export default function MiniFooter() {
   return (
     
 

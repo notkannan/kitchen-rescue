@@ -64,7 +64,7 @@ export default function Signup() {
               <p className='text-3xl'>💜</p>
             </div>
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Let's create an account, chef!
+              Let&apos;s create an account, chef!
             </h2>
           </div>
 
