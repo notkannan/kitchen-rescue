@@ -122,7 +122,7 @@ export default function CardsList() {
                         Welcome to your inventory<br />
                         <span className="text-sm text-gray-900">This inventory is linked to {session.user.email}</span>
                     </Typography>
-                    <Box sx={{ mb: 2, mt: 2 }} className='flex flex-row gap-4 ml-6'>
+                    <Box sx={{ mb: 2, mt: 2 }} className='flex flex-row gap-4 flex-wrap'>
                         <TextField
                             label="Search by Name"
                             variant="outlined"
@@ -136,13 +136,15 @@ export default function CardsList() {
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value as 'name' | 'quantityAsc' | 'quantityDesc')}
                                 label="Sort By"
-                                sx={{ borderRadius: '25px' }}
+                                sx={{ borderRadius: '25px', width: '200px' }}
                             >
                                 <MenuItem value="name">Name</MenuItem>
                                 <MenuItem value="quantityAsc">Quantity (Low to High)</MenuItem>
                                 <MenuItem value="quantityDesc">Quantity (High to Low)</MenuItem>
                             </Select>
                         </FormControl>
+                        <CameraComponent />
+                        <AddItem onSubmit={addOrUpdateItem} />
                     </Box>
 
                     <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center', mt: 5 }}>
@@ -157,8 +159,7 @@ export default function CardsList() {
                             />
                         ))}
                     </Box>
-                    <CameraComponent />
-                    <AddItem onSubmit={addOrUpdateItem} />
+                    
                     {editItem && (
                         <EditItemDialog 
                             item={editItem} 

@@ -49,7 +49,7 @@ export default function RecipeForm({ setRecipes }: RecipeFormProps) {
     <Paper elevation={3} sx={{ p: 4, height: '100%', borderRadius: 5}}>
       <Typography variant="h4" component="h1" gutterBottom align="center" sx={{
         textAlign: 'center',
-        fontWeight: 'bold',
+        fontWeight: 'light',
         fontSize: { xs: '2.5rem', sm: '3rem' },
       }}>
         Discover Recipes
@@ -57,7 +57,7 @@ export default function RecipeForm({ setRecipes }: RecipeFormProps) {
       <Typography variant="body1" gutterBottom align="center" sx={{
         fontWeight: 'light'
       }}>
-        SOS Cooking: Enter your details for appetizing recipes!
+        Get appetizing recipes from your ingredients or go crazy maybe?
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4 }}>
         <Grid container spacing={3}>
@@ -146,10 +146,10 @@ export default function RecipeForm({ setRecipes }: RecipeFormProps) {
               fullWidth
               sx={{
                 mt: 2,
-                backgroundColor: 'secondary.main',
+                backgroundColor: 'primary.main',
                 textTransform: 'none',
                 '&:hover': {
-                  backgroundColor: 'secondary.dark',
+                  backgroundColor: 'primary.dark',
                 }
               }}
             >

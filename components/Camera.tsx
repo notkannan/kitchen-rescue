@@ -38,7 +38,7 @@ const CameraComponent = () => {
   return (
     <div>
       <Fab
-        sx={{position: 'fixed', bottom: '70%', right: '30%'}} 
+        // sx={{position: 'fixed', bottom: '70%', right: '30%'}} 
         onClick={handleOpen} 
         aria-label="add" 
         color="primary"

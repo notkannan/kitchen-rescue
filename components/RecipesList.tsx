@@ -58,7 +58,7 @@ export default function RecipesList({ recipes }: RecipesListProps) {
     }}>
       <Typography variant="h4" component="h2" gutterBottom align="center" sx={{
         textAlign: 'center', 
-        fontWeight: 'bold', 
+        fontWeight: 'light', 
         fontSize: { xs: '2rem', sm: '3rem' },
         mb: isMobile ? 2 : 3,
       }}>

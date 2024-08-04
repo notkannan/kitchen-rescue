@@ -10,7 +10,7 @@ export default function Recipes() {
   const [recipes, setRecipes] = useState<any[]>([]);
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3, mt: 10}}>
+    <Box sx={{ flexGrow: 1, p: 3, mt: 2, width:'95vw', margin: 'auto'}}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <RecipeForm setRecipes={setRecipes} />
