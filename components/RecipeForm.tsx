@@ -9,7 +9,7 @@ import {
   Grid,
   Paper,
 } from '@mui/material';
-import { generateRecipes } from "@/utils/actions";
+import { generateRecipes } from "@/utils/recipeActions";
 
 interface RecipeFormProps {
   setRecipes: (recipes: any[]) => void;

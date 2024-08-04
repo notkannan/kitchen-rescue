@@ -11,7 +11,7 @@ import AddItem from "./AddItem";
 import EditItemDialog from "./EditItemDialog";
 import { usePantryItems } from "@/providers/pantryContext";
 import { printSuccessMessage } from "@/utils/util";
-import CameraComponent from "./Camera";
+import CameraComponent from "./CameraComponent";
 
 export default function CardsList() {
     const { data: session, status } = useSession();
