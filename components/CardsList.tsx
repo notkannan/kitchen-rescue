@@ -118,7 +118,7 @@ export default function CardsList() {
         <>
             {status === "authenticated" ? (
                 <>
-                    <Typography variant='h4' color='primary.light' mb={4} ml={4}>
+                    <Typography variant='h4' color='primary.light' mb={4}>
                         Welcome to your inventory<br />
                         <span className="text-sm text-gray-900">This inventory is linked to {session.user.email}</span>
                     </Typography>
