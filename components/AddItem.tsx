@@ -33,7 +33,7 @@ export default function AddItem({ onSubmit }: AddItemProps) {
     return (
         <>
             <Fab 
-                sx={{position: 'fixed', bottom: '25%', right: '20%'}} 
+                sx={{position: 'fixed', bottom: '70%', right: '23%'}} 
                 onClick={handleOpen} 
                 aria-label="add" 
                 color="primary"

@@ -11,7 +11,7 @@ import AddItem from "./AddItem";
 import EditItemDialog from "./EditItemDialog";
 import { usePantryItems } from "@/providers/pantryContext";
 import { printSuccessMessage } from "@/utils/util";
-
+import CameraComponent from "./Camera";
 
 export default function CardsList() {
     const { data: session, status } = useSession();
@@ -157,8 +157,8 @@ export default function CardsList() {
                             />
                         ))}
                     </Box>
+                    <CameraComponent />
                     <AddItem onSubmit={addOrUpdateItem} />
-
                     {editItem && (
                         <EditItemDialog 
                             item={editItem} 
