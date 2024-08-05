@@ -21,7 +21,7 @@ const LeastItemsChart = ({ pantryItems }: any) => {
       },
     ],
     height: isMobile ? 250 : 300,
-    width: isMobile ? 300 : 500,
+    width: isMobile ? 250 : 500,
     margin: {
       left: isMobile ? 100 : 110,
       right: 10,
