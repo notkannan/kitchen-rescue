@@ -48,10 +48,10 @@ const CameraComponent = () => {
         const updatedQuantity = existingItem.quantity + quantity;
         
         // Update in Firestore
-        const itemDocRef = doc(db, 'inventory', existingItem.id);
-        await updateDoc(itemDocRef, {
-          quantity: updatedQuantity,
-        });
+        // const itemDocRef = doc(db, 'inventory', existingItem.id);
+        // await updateDoc(itemDocRef, {
+        //   quantity: updatedQuantity,
+        // });
 
         // Update local state
         setInventory(prevItems => 
