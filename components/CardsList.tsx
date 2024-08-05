@@ -11,7 +11,7 @@ import AddItem from "./AddItem";
 import EditItemDialog from "./EditItemDialog";
 import { usePantryItems } from "@/providers/pantryContext";
 import { printSuccessMessage } from "@/utils/util";
-import CameraComponent from "./CameraComponent";
+import PantryItemCapture from "./PantryItemCapture";
 
 export default function CardsList() {
     const { data: session, status } = useSession();
@@ -23,77 +23,76 @@ export default function CardsList() {
 
     const addOrUpdateItem = async (item: Omit<Inventory, 'userId'>) => {
         if (!session?.user?.id) return;
-
-        const existingItem = inventory.find(i => i.name.toLowerCase() === item.name.toLowerCase());
-
+      
+        const itemNameLower = item.name.toLowerCase().trim();
+        const existingItem = inventory.find(i => i.name.toLowerCase() === itemNameLower);
+      
         if (existingItem) {
-            setInventory(prev => prev.map(i => 
-                i.name === existingItem.name ? { ...i, quantity: newQuantity } : i
-            ));
-            printSuccessMessage("Item updated successfully!")
-            const newQuantity = Number(existingItem.quantity) + Number(item.quantity);
-            const itemRef = collection(db, "inventory");
-            const q = query(itemRef, 
-                where("userId", "==", session.user.id),
-                where("name", "==", existingItem.name)
-            );
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                const docRef = querySnapshot.docs[0].ref;
-                await updateDoc(docRef, { quantity: newQuantity });
-            }
-            
-
+          const newQuantity = Number(existingItem.quantity) + Number(item.quantity);
+          setInventory(prev => prev.map(i => 
+            i.name.toLowerCase() === itemNameLower ? { ...i, name: item.name, quantity: newQuantity } : i
+          ));
+          printSuccessMessage("Item updated successfully!")
+          const itemRef = collection(db, "inventory");
+          const q = query(itemRef, 
+            where("userId", "==", session.user.id),
+            where("nameLower", "==", itemNameLower)
+          );
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const docRef = querySnapshot.docs[0].ref;
+            await updateDoc(docRef, { quantity: newQuantity, name: item.name });
+          }
         } else {
-            const newItem = { 
-                ...item, 
-                userId: session.user.id 
-            };
-            const docRef = await addDoc(collection(db, "inventory"), newItem);
-            printSuccessMessage("Item added successfully!")
-            setInventory(prev => [...prev, { ...newItem, id: docRef.id }]);
-            
+          const newItem = { 
+            ...item, 
+            nameLower: itemNameLower,
+            userId: session.user.id 
+          };
+          const docRef = await addDoc(collection(db, "inventory"), newItem);
+          printSuccessMessage("Item added successfully!")
+          setInventory(prev => [...prev, { ...newItem, id: docRef.id }]);
         }
-    };
-
-    const deleteItem = async (name: string) => {
+      };
+      
+      const deleteItem = async (name: string) => {
         if (!session?.user?.id) return;
-
-        setInventory(prev => prev.filter(item => item.name !== name));
+      
+        const nameLower = name.toLowerCase();
+        setInventory(prev => prev.filter(item => item.name.toLowerCase() !== nameLower));
         printSuccessMessage("Item deleted successfully!")
         const itemRef = collection(db, "inventory");
         const q = query(itemRef, 
-            where("userId", "==", session.user.id),
-            where("name", "==", name)
+          where("userId", "==", session.user.id),
+          where("nameLower", "==", nameLower)
         );
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
-            await deleteDoc(querySnapshot.docs[0].ref);
+          await deleteDoc(querySnapshot.docs[0].ref);
         }
-        
-
-    };
-
-    const updateItem = async (name: string, updatedItem: Partial<Inventory>) => {
+      };
+      
+      const updateItem = async (name: string, updatedItem: Partial<Inventory>) => {
         if (!session?.user?.id) return;
-
+      
+        const nameLower = name.toLowerCase();
         setInventory(prev => prev.map(item => 
-            item.name === name ? { ...item, ...updatedItem } : item
+          item.name.toLowerCase() === nameLower ? { ...item, ...updatedItem, nameLower: updatedItem.name?.toLowerCase() || nameLower } : item
         ));
-
+      
         const itemRef = collection(db, "inventory");
         const q = query(itemRef, 
-            where("userId", "==", session.user.id),
-            where("name", "==", name)
+          where("userId", "==", session.user.id),
+          where("nameLower", "==", nameLower)
         );
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
-            const docRef = querySnapshot.docs[0].ref;
-            await updateDoc(docRef, updatedItem);
+          const docRef = querySnapshot.docs[0].ref;
+          await updateDoc(docRef, { ...updatedItem, nameLower: updatedItem.name?.toLowerCase() || nameLower });
         }
         printSuccessMessage("Item updated successfully!")
         setEditItem(null);
-    };
+      };
 
     const handleQuantityChange = async (name: string, change: number) => {
         const item = inventory.find(i => i.name === name);
@@ -143,7 +142,7 @@ export default function CardsList() {
                                 <MenuItem value="quantityDesc">Quantity (High to Low)</MenuItem>
                             </Select>
                         </FormControl>
-                        <CameraComponent />
+                        <PantryItemCapture />
                         <AddItem onSubmit={addOrUpdateItem} />
                     </Box>
 

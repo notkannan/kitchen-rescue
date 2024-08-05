@@ -1,3 +1,5 @@
+// ImageCapture.tsx
+
 import React, { useRef } from "react";
 import { Camera } from "react-camera-pro";
 import { Button } from "@mui/material";
@@ -41,14 +43,14 @@ const ImageCapture: React.FC<ImageCaptureProps> = ({ image, onCapture }) => {
           <Button
             onClick={handleCapture}
             variant="contained"
-            color="secondary"
             startIcon={<CameraAltIcon />}
             style={{
               position: 'absolute',
               bottom: '20px',
               left: '50%',
               transform: 'translateX(-50%)',
-              zIndex: 1000
+              zIndex: 1000,
+              backgroundColor: 'primary.main'
             }}
           >
             Capture
