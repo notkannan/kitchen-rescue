@@ -25,19 +25,18 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-      {/* <!-- Google tag (gtag.js) --> */}
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-C1KW3K1LPS"></Script>
-        <Script id="google-analytics">
+        {/* <!-- Google tag (gtag.js) --> */}
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-PKPNWVGBHZ"></Script>
+        <Script id="goog-analytics">
           {
-          `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
+            `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
 
-            gtag('config', 'G-C1KW3K1LPS');
-          `
+              gtag('config', 'G-PKPNWVGBHZ');
+            `
           }
-
         </Script>
       </head>
       <body className={inter.className}>
