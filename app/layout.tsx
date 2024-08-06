@@ -7,6 +7,7 @@ import theme from "@/theme";
 import { Providers } from "@/components/SessionProvider";
 import { PantryProvider } from "@/providers/pantryContext";
 import ToastProvider from "@/providers/toastProvider";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,22 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+      {/* <!-- Google tag (gtag.js) --> */}
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-C1KW3K1LPS"></Script>
+        <Script id="google-analytics">
+          {
+          `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-C1KW3K1LPS');
+          `
+          }
+
+        </Script>
+      </head>
       <body className={inter.className}>
         <Providers>
           <ToastProvider>
