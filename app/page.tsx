@@ -18,9 +18,6 @@ import theme from "@/theme";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
 export default function SignInSide() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
