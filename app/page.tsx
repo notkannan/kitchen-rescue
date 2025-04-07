@@ -52,7 +52,7 @@ export default function SignInSide() {
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
 
               <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-gray-900 md:text-5xl lg:text-6xl"><span className="text-transparent bg-clip-text bg-gradient-to-r to-indigo-600 from-indigo-950">Kitchen Rescue</span><br />Culinary crisis manager.</h1>
-              <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-700">Get appetizing receipes and efficiently maintain your inventory! We&apos;re happy to have you</p>
+              <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-700">Get appetizing receipes and maintain your inventory like a boss! We&apos;re happy to have you</p>
 
               <Button
                 type="button"
